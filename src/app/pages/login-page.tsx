@@ -1,29 +1,23 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Eye, EyeOff, Sparkles } from "lucide-react";
 
-interface LoginFormData {
-  email: string;
-  password: string;
-}
-
 export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormData>();
 
-  const onSubmit = (data: LoginFormData) => {
-    console.log("Login data:", data);
-    // TODO: Integrate with your backend API
-    // For demo purposes, navigate to dashboard
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    console.log("Email:", email);
+    console.log("Password:", password);
+
+    // 🔥 For now: allow any credentials
     navigate("/dashboard");
   };
 
@@ -59,47 +53,33 @@ export function LoginPage() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={handleLogin} className="space-y-6">
+            {/* Email */}
             <div className="space-y-2">
-              <Label htmlFor="email">Email Address</Label>
+              <Label>Email Address</Label>
               <Input
-                id="email"
                 type="email"
-                placeholder="your.email@company.com"
-                className="transition-all duration-200 focus:ring-2 focus:ring-secondary focus:border-secondary"
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: "Invalid email address",
-                  },
-                })}
+                placeholder="Enter anything"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
-              {errors.email && (
-                <p className="text-sm text-destructive">{errors.email.message}</p>
-              )}
             </div>
 
+            {/* Password */}
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label>Password</Label>
               <div className="relative">
                 <Input
-                  id="password"
                   type={showPassword ? "text" : "password"}
-                  placeholder="Enter your password"
-                  className="pr-10 transition-all duration-200 focus:ring-2 focus:ring-secondary focus:border-secondary"
-                  {...register("password", {
-                    required: "Password is required",
-                    minLength: {
-                      value: 6,
-                      message: "Password must be at least 6 characters",
-                    },
-                  })}
+                  placeholder="Enter anything"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="pr-10"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
                   {showPassword ? (
                     <EyeOff className="w-5 h-5" />
@@ -108,11 +88,6 @@ export function LoginPage() {
                   )}
                 </button>
               </div>
-              {errors.password && (
-                <p className="text-sm text-destructive">
-                  {errors.password.message}
-                </p>
-              )}
             </div>
 
             <Button
@@ -122,18 +97,10 @@ export function LoginPage() {
             >
               Sign In
             </Button>
-
-            <div className="text-center">
-              <a
-                href="#"
-                className="text-sm text-secondary hover:underline"
-              >
-                Forgot Password?
-              </a>
-            </div>
           </form>
         </div>
       </div>
     </div>
   );
 }
+P

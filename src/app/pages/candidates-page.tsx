@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { useLocation } from "react-router";
 import { GlassCard } from "../components/glass-card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Progress } from "../components/ui/progress";
@@ -105,7 +111,12 @@ const mockCandidates: Candidate[] = [
 
 export function CandidatesPage() {
   const location = useLocation();
-  const [selectedRole, setSelectedRole] = useState(location.state?.job || "");
+
+  // 🔥 Use "all" instead of empty string
+  const [selectedRole, setSelectedRole] = useState<string>(
+    location.state?.job || "all"
+  );
+
   const [candidates] = useState<Candidate[]>(mockCandidates);
 
   const getMatchScoreColor = (score: number) => {
@@ -120,9 +131,11 @@ export function CandidatesPage() {
     toast.success(`Calling ${name}...`);
   };
 
-  const filteredCandidates = selectedRole
-    ? candidates.filter(c => c.role === selectedRole)
-    : candidates;
+  // 🔥 Updated filtering logic
+  const filteredCandidates =
+    selectedRole === "all"
+      ? candidates
+      : candidates.filter((c) => c.role === selectedRole);
 
   return (
     <div className="p-8">
@@ -138,18 +151,24 @@ export function CandidatesPage() {
         <div className="p-6">
           <div className="flex items-center gap-4">
             <label className="text-sm font-medium">Filter by Role:</label>
+
             <Select value={selectedRole} onValueChange={setSelectedRole}>
               <SelectTrigger className="w-64">
                 <SelectValue placeholder="All Roles" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Roles</SelectItem>
-                <SelectItem value="Senior Software Engineer">Senior Software Engineer</SelectItem>
-                <SelectItem value="Product Manager">Product Manager</SelectItem>
+                <SelectItem value="all">All Roles</SelectItem>
+                <SelectItem value="Senior Software Engineer">
+                  Senior Software Engineer
+                </SelectItem>
+                <SelectItem value="Product Manager">
+                  Product Manager
+                </SelectItem>
                 <SelectItem value="UX Designer">UX Designer</SelectItem>
                 <SelectItem value="Data Analyst">Data Analyst</SelectItem>
               </SelectContent>
             </Select>
+
             <div className="ml-auto text-sm text-muted-foreground">
               Showing {filteredCandidates.length} candidates
             </div>
@@ -166,10 +185,14 @@ export function CandidatesPage() {
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h3 className="text-xl mb-1">{candidate.name}</h3>
-                  <p className="text-sm text-muted-foreground">{candidate.role}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {candidate.role}
+                  </p>
                 </div>
                 <Badge
-                  className={`${getMatchScoreColor(candidate.matchScore)} text-white`}
+                  className={`${getMatchScoreColor(
+                    candidate.matchScore
+                  )} text-white`}
                 >
                   {candidate.matchScore}% Match
                 </Badge>
@@ -177,7 +200,9 @@ export function CandidatesPage() {
 
               {/* Skills */}
               <div className="mb-4">
-                <p className="text-sm text-muted-foreground mb-2">Key Skills</p>
+                <p className="text-sm text-muted-foreground mb-2">
+                  Key Skills
+                </p>
                 <div className="flex flex-wrap gap-2">
                   {candidate.skills.map((skill) => (
                     <span
@@ -194,14 +219,19 @@ export function CandidatesPage() {
               <div className="space-y-2 mb-4 text-sm">
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Mail className="w-4 h-4" />
-                  <a href={`mailto:${candidate.email}`} className="hover:text-secondary">
+                  <a
+                    href={`mailto:${candidate.email}`}
+                    className="hover:text-secondary"
+                  >
                     {candidate.email}
                   </a>
                 </div>
+
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Phone className="w-4 h-4" />
                   <span>{candidate.phone}</span>
                 </div>
+
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <MapPin className="w-4 h-4" />
                   <span>{candidate.location}</span>
@@ -216,10 +246,14 @@ export function CandidatesPage() {
                     {candidate.stepsCompleted}/{candidate.totalSteps} Steps
                   </p>
                 </div>
+
                 <Progress
-                  value={(candidate.stepsCompleted / candidate.totalSteps) * 100}
+                  value={
+                    (candidate.stepsCompleted / candidate.totalSteps) * 100
+                  }
                   className="h-2"
                 />
+
                 <p className="text-xs text-muted-foreground mt-1">
                   Current: {candidate.currentStage}
                 </p>
@@ -227,7 +261,9 @@ export function CandidatesPage() {
 
               {/* Actions */}
               <Button
-                onClick={() => handleCall(candidate.phone, candidate.name)}
+                onClick={() =>
+                  handleCall(candidate.phone, candidate.name)
+                }
                 className="w-full bg-secondary hover:bg-secondary/90"
               >
                 <Phone className="w-4 h-4 mr-2" />
